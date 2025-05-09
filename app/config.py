@@ -49,8 +49,12 @@ class Settings(BaseSettings):
         """
         return f"postgresql+psycopg2://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_BASE}"
 
+    JWT_SECRET_KEY: str
+    BCRYPT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
     model_config = {
-        "env_file": os.path.expanduser("~/envs/rrgc.env"),
+        "env_file": os.path.expanduser("~/.envs/rrgc.env"),
         "env_file_encoding": "utf-8",
         "populate_by_name": True,
     }
