@@ -5,7 +5,6 @@ from fastapi import UploadFile
 
 from app.db.db import get_sync_session
 from app.db.models import ShotLog
-from app.db.models.shots_model import ShotLog
 
 
 async def load_csv_file(file: UploadFile):
