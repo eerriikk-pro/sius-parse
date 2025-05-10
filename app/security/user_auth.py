@@ -37,3 +37,13 @@ async def get_current_active_user(
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
+
+
+async def get_current_superuser(
+    current_user: Annotated[User, Depends(get_current_user)],
+):
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=403, detail="Only admins can access this resource"
+        )
+    return current_user

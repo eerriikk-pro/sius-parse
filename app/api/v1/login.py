@@ -8,9 +8,12 @@ from pydantic import BaseModel
 from app.crud.user_crud import create_user
 from app.db.models.user_model import User, UserBase, UserCreate
 from app.security.hash import create_jwt_token
-from app.security.user_auth import authenticate_user, get_current_active_user
+from app.security.user_auth import (
+    authenticate_user,
+    get_current_active_user,
+    get_current_superuser,
+)
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 router = APIRouter()
 
 
@@ -41,8 +44,14 @@ async def read_users_me(
     return current_user
 
 
-@router.post("/users", response_model=UserBase)
-async def add_user(user: UserCreate):
+@router.post(
+    "/users",
+    response_model=UserBase,
+    dependencies=[Depends(get_current_superuser)],
+)
+async def add_user(
+    user: UserCreate,
+):
     created_user = create_user(user)
     return UserBase(
         **created_user.model_dump(
