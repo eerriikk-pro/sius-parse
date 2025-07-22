@@ -1,5 +1,7 @@
 data/
 dependencies/
+lambda-deploy.zip
+lambda-package/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
