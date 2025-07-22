@@ -1,0 +1,157 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* RRGC Shooting Scores Design System - Golden Theme */
+
+@layer base {
+  :root {
+    /* Main golden color palette */
+    --background: 48 95% 95%;
+    --foreground: 30 25% 15%;
+
+    --card: 48 100% 98%;
+    --card-foreground: 30 25% 15%;
+
+    --popover: 48 100% 98%;
+    --popover-foreground: 30 25% 15%;
+
+    /* Primary golden colors */
+    --primary: 48 95% 55%;
+    --primary-foreground: 30 25% 15%;
+    --primary-glow: 48 85% 70%;
+
+    /* Secondary warm colors */
+    --secondary: 45 60% 85%;
+    --secondary-foreground: 30 25% 15%;
+
+    /* Muted golden tones */
+    --muted: 45 40% 88%;
+    --muted-foreground: 30 15% 45%;
+
+    /* Accent golden highlights */
+    --accent: 50 100% 70%;
+    --accent-foreground: 30 25% 15%;
+
+    /* Destructive remains red */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Borders and inputs */
+    --border: 45 30% 80%;
+    --input: 48 60% 90%;
+    --ring: 48 95% 55%;
+
+    /* Success green for good scores */
+    --success: 120 60% 45%;
+    --success-foreground: 0 0% 98%;
+
+    /* Warning amber for average scores */
+    --warning: 35 85% 55%;
+    --warning-foreground: 30 25% 15%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(48 95% 55%), hsl(48 85% 70%));
+    --gradient-card: linear-gradient(180deg, hsl(48 100% 98%), hsl(45 60% 95%));
+    --gradient-hero: linear-gradient(135deg, hsl(48 95% 55%), hsl(50 100% 70%));
+
+    /* Shadows */
+    --shadow-golden: 0 10px 30px -5px hsl(48 95% 55% / 0.3);
+    --shadow-card: 0 4px 20px -2px hsl(48 60% 40% / 0.15);
+
+    /* Animation timings */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Dark mode golden theme */
+    --background: 30 25% 8%;
+    --foreground: 48 100% 95%;
+
+    --card: 30 25% 10%;
+    --card-foreground: 48 100% 95%;
+
+    --popover: 30 25% 10%;
+    --popover-foreground: 48 100% 95%;
+
+    /* Primary golden colors for dark mode */
+    --primary: 48 85% 60%;
+    --primary-foreground: 30 25% 8%;
+    --primary-glow: 48 75% 75%;
+
+    /* Secondary warm colors for dark mode */
+    --secondary: 35 40% 20%;
+    --secondary-foreground: 48 100% 95%;
+
+    /* Muted golden tones for dark mode */
+    --muted: 35 30% 15%;
+    --muted-foreground: 45 20% 65%;
+
+    /* Accent golden highlights for dark mode */
+    --accent: 48 70% 25%;
+    --accent-foreground: 48 100% 95%;
+
+    /* Destructive remains red */
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Success and warning for dark mode */
+    --success: 120 50% 50%;
+    --success-foreground: 0 0% 98%;
+    --warning: 35 75% 60%;
+    --warning-foreground: 30 25% 8%;
+
+    /* Borders and inputs for dark mode */
+    --border: 35 30% 20%;
+    --input: 35 30% 18%;
+    --ring: 48 85% 60%;
+
+    /* Gradients for dark mode */
+    --gradient-primary: linear-gradient(135deg, hsl(48 85% 60%), hsl(48 75% 75%));
+    --gradient-card: linear-gradient(180deg, hsl(30 25% 10%), hsl(35 30% 12%));
+    --gradient-hero: linear-gradient(135deg, hsl(48 85% 60%), hsl(50 80% 70%));
+
+    /* Shadows for dark mode */
+    --shadow-golden: 0 10px 30px -5px hsl(48 85% 60% / 0.4);
+    --shadow-card: 0 4px 20px -2px hsl(30 25% 5% / 0.3);
+
+    /* Sidebar for dark mode */
+    --sidebar-background: 30 25% 8%;
+    --sidebar-foreground: 48 100% 95%;
+    --sidebar-primary: 48 85% 60%;
+    --sidebar-primary-foreground: 30 25% 8%;
+    --sidebar-accent: 35 30% 15%;
+    --sidebar-accent-foreground: 48 100% 95%;
+    --sidebar-border: 35 30% 20%;
+    --sidebar-ring: 48 85% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
