@@ -15,6 +15,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.get("/health", tags=["Health"])
+def health_check():
+    return {"status": "ok"}
+
+
 app.include_router(import_file.router, prefix="/api/v1/import", tags=["Import"])
 app.include_router(login.router, prefix="/api/v1", tags=["login"])
 app.include_router(athlete.router, prefix="/api/v1/athlete", tags=["Athletes"])
