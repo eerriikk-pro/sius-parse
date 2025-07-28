@@ -1,9 +1,5 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import BaseModel
-
 from app.crud.user_crud import create_user
 from app.db.models.user_model import User, UserBase, UserCreate
 from app.security.hash import create_jwt_token
@@ -12,6 +8,9 @@ from app.security.user_auth import (
     get_current_active_user,
     get_current_superuser,
 )
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import BaseModel
 
 router = APIRouter()
 
@@ -36,7 +35,7 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
-@router.get("/users/me/", response_model=User)
+@router.get("/users/me", response_model=User)
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_active_user)],
 ):

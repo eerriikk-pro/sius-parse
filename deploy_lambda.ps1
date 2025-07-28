@@ -28,14 +28,6 @@ docker cp lambda-temp:/var/task ./$packagePath
 Write-Host "Removing temporary Docker container..."
 docker rm lambda-temp
 
-# Zip the contents
-Write-Host "Zipping deployment package..."
-Set-Location $packagePath
-Compress-Archive -Path * -DestinationPath ../$zipPath
-Set-Location ..
-
-# Clean up extracted package folder
-Remove-Item -Recurse -Force $packagePath
 
 Write-Host "\nDeployment package created: $zipPath"
 Write-Host "\nNext steps:"

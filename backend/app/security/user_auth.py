@@ -1,17 +1,18 @@
 from typing import Annotated, Optional
 
+from app.crud.user_crud import get_user, get_user_by_any_identifier
+from app.db.models.user_model import User
+from app.security.hash import credentials_exception, decode_jwt_token, verify_password
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 
-from app.crud.user_crud import get_user
-from app.db.models.user_model import User
-from app.security.hash import credentials_exception, decode_jwt_token, verify_password
-
 
 def authenticate_user(username: str, password: str) -> Optional[User]:
-    user = get_user(username)
+    # Use the new function that supports username, email, or member number
+    user = get_user_by_any_identifier(username)
     if not user:
         return False
+
     if not verify_password(password, user.hashed_password):
         return False
     return user

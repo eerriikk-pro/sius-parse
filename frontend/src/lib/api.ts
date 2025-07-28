@@ -21,7 +21,7 @@ export async function login(username: string, password: string) {
 }
 
 export async function getCurrentUser(token: string) {
-  const response = await fetch(`${BACKEND_URL}/api/v1/users/me/`, {
+  const response = await fetch(`${BACKEND_URL}/api/v1/users/me`, {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
@@ -55,7 +55,7 @@ export async function createUser({ username, email, password, full_name, athlete
 export async function listAthletes() {
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
   if (!token) throw new Error("Not authenticated");
-  const response = await fetch(`${BACKEND_URL}/api/v1/athlete/`, {
+  const response = await fetch(`${BACKEND_URL}/api/v1/athlete`, {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
@@ -85,7 +85,7 @@ export async function deleteAthlete(athlete_id: number) {
 export async function createAthlete({ id, first_name, last_name, active = true }: { id: number; first_name: string; last_name: string; active?: boolean }) {
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
   if (!token) throw new Error("Not authenticated");
-  const response = await fetch(`${BACKEND_URL}/api/v1/athlete/`, {
+  const response = await fetch(`${BACKEND_URL}/api/v1/athlete`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

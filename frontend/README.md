@@ -1,3 +1,26 @@
+# Targets are rendered to ISSF 2023 specs:
+## 10m Air Pistol Target
+10 Ring 11.5mm (±0.1mm) 5 Ring 91.5mm (±0.5mm)
+9 Ring 27.5mm (±0.1mm) 4 Ring 107.5mm (±0.5mm)
+8 Ring 43.5mm (±0.2mm) 3 Ring 123.5mm (±0.5mm)
+7 Ring 59.5mm (±0.5mm) 2 Ring 139.5mm (±0.5mm)
+6 Ring 75.5mm (±0.5mm) 1 Ring 155.5mm (±0.5mm)
+Inner ten: 5.0mm (±0.1mm).
+Black from 7 to 10 rings = 59.5mm (±0.5mm).
+Ring thickness: 0.1mm to 0.2mm.
+## 10m Air Rifle Target
+10 Ring 0.5mm (±0.1mm) 5 Ring 25.5mm (±0.1mm)
+9 Ring 5.5mm (±0.1mm) 4 Ring 30.5mm (±0.1mm)
+8 Ring 10.5mm (±0.1mm) 3 Ring 35.5mm (±0.1mm)
+7 Ring 15.5mm (±0.1mm) 2 Ring 40.5mm (±0.1mm)
+6 Ring 20.5mm (±0.1mm) 1 Ring 45.5mm (±0.1mm)
+Inner Ten: When the 10 ring (dot) has been shot out completely as determined
+by the use of an Air Pistol OUTWARD scoring gauge.
+Black from 4 to 9 rings = 30.5mm (±0.1mm).
+The ten ring is a white dot = 0.5mm (±0.1mm). Ring thickness: 0.1mm to
+0.2mm.
+
+
 # Welcome to your Lovable project
 
 ## Project info

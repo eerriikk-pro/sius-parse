@@ -1,7 +1,5 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
-
 from app.crud.athlete_crud import (
     create_athlete,
     delete_athlete,
@@ -12,12 +10,13 @@ from app.crud.athlete_crud import (
 from app.db.models.user_model import User
 from app.schemas.athletes import AthleteCreate, AthleteRead, AthleteUpdate
 from app.security.user_auth import get_current_active_user, get_current_superuser
+from fastapi import APIRouter, Depends, HTTPException
 
 router = APIRouter()
 
 
 @router.post(
-    "/",
+    "",
     response_model=AthleteRead,
     dependencies=[Depends(get_current_superuser)],
 )
@@ -26,7 +25,7 @@ def add_athlete(athlete: AthleteCreate):
 
 
 @router.get(
-    "/",
+    "",
     response_model=List[AthleteRead],
     dependencies=[Depends(get_current_superuser)],
 )

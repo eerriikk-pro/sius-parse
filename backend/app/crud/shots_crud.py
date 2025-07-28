@@ -32,6 +32,48 @@ class DayStats(BaseModel):
     list_of_sighters: List[Shot]
 
 
+def create_relays_from_shots(match_shots: List[ShotLog]) -> List[RelayStats]:
+    """Split match shots into relays of 60 shots each, ordered by time."""
+    if not match_shots:
+        return []
+
+    # Sort match shots by time
+    sorted_shots = sorted(match_shots, key=lambda s: s.shot_time)
+
+    relays = []
+    for i in range(0, len(sorted_shots), 60):
+        relay_shots = sorted_shots[i : i + 60]
+
+        # Convert to Shot models
+        relay_models = [
+            Shot(
+                shot_time=s.shot_time,
+                primary_score=s.primary_score,
+                secondary_score=s.secondary_score,
+                x_mm=s.x_mm,
+                y_mm=s.y_mm,
+            )
+            for s in relay_shots
+        ]
+
+        # Calculate relay statistics
+        total_score = sum(s.primary_score for s in relay_shots)
+        best_score = max([s.primary_score for s in relay_shots], default=0)
+        total_shots = len(relay_shots)
+        avg_score = (total_score / total_shots) if total_shots else 0
+
+        relay_stats = RelayStats(
+            total_shots=total_shots,
+            total_score=total_score,
+            best_score=best_score,
+            average_score=avg_score,
+            list_of_shots=relay_models,
+        )
+        relays.append(relay_stats)
+
+    return relays
+
+
 def get_recent_scores(athlete_id: int, days: int = 10) -> List[DayStats]:
     today = date.today()
     start_date = today - timedelta(days=days - 1)
@@ -66,36 +108,23 @@ def get_recent_scores(athlete_id: int, days: int = 10) -> List[DayStats]:
             )
             for s in sighters
         ]
-        # Relay: all match shots (match_shot == 1)
-        relay_shots = [s for s in day_shots if s.match_shot == 1]
-        relay_models = [
-            Shot(
-                shot_time=s.shot_time,
-                primary_score=s.primary_score,
-                secondary_score=s.secondary_score,
-                x_mm=s.x_mm,
-                y_mm=s.y_mm,
-            )
-            for s in relay_shots
-        ]
-        total_score = sum(s.primary_score for s in relay_shots)
-        best_score = max([s.primary_score for s in relay_shots], default=0)
-        total_shots = len(relay_shots)
-        avg_score = (total_score / total_shots) if total_shots else 0
-        relay_stats = RelayStats(
-            total_shots=total_shots,
-            total_score=total_score,
-            best_score=best_score,
-            average_score=avg_score,
-            list_of_shots=relay_models,
-        )
+        # Match shots (match_shot == 1) - split into relays
+        match_shots = [s for s in day_shots if s.match_shot == 1]
+        relays = create_relays_from_shots(match_shots)
+
+        # Calculate overall day statistics
+        all_match_shots = [s for s in match_shots]
+        total_score = sum(s.primary_score for s in all_match_shots)
+        best_score = max([s.primary_score for s in all_match_shots], default=0)
+        total_shots = len(all_match_shots)
+
         result.append(
             DayStats(
                 day=d,
                 total_shots=total_shots,
                 total_sighters=len(sighters),
                 best_score=best_score,
-                list_of_relays=[relay_stats],
+                list_of_relays=relays,
                 list_of_sighters=sighter_models,
             )
         )
@@ -154,41 +183,32 @@ def get_shots_by_day(athlete_id: int, shot_date: date) -> DayStats:
         )
         for s in sighters
     ]
-    relay_shots = [s for s in shots if s.match_shot == 1]
-    relay_models = [
-        Shot(
-            shot_time=s.shot_time,
-            primary_score=s.primary_score,
-            secondary_score=s.secondary_score,
-            x_mm=s.x_mm,
-            y_mm=s.y_mm,
-        )
-        for s in relay_shots
-    ]
-    total_score = sum(s.primary_score for s in relay_shots)
-    best_score = max([s.primary_score for s in relay_shots], default=0)
-    total_shots = len(relay_shots)
-    avg_score = (total_score / total_shots) if total_shots else 0
-    relay_stats = RelayStats(
-        total_shots=total_shots,
-        total_score=total_score,
-        best_score=best_score,
-        average_score=avg_score,
-        list_of_shots=relay_models,
-    )
+    # Match shots (match_shot == 1) - split into relays
+    match_shots = [s for s in shots if s.match_shot == 1]
+    relays = create_relays_from_shots(match_shots)
+
+    # Calculate overall day statistics
+    all_match_shots = [s for s in match_shots]
+    total_score = sum(s.primary_score for s in all_match_shots)
+    best_score = max([s.primary_score for s in all_match_shots], default=0)
+    total_shots = len(all_match_shots)
+
     return DayStats(
         day=shot_date,
         total_shots=total_shots,
         total_sighters=len(sighters),
         best_score=best_score,
-        list_of_relays=[relay_stats],
+        list_of_relays=relays,
         list_of_sighters=sighter_models,
     )
 
 
 def get_shots_by_set(athlete_id: int, shot_date: date, set_id: int) -> List[RelayStats]:
-    # For now, just return the relay for the day if set_id == 1, else empty
-    if set_id != 1:
-        return []
+    # Get all relays for the day
     day_stats = get_shots_by_day(athlete_id, shot_date)
-    return day_stats.list_of_relays
+
+    # Return the specific relay based on set_id (1-based indexing)
+    if 1 <= set_id <= len(day_stats.list_of_relays):
+        return [day_stats.list_of_relays[set_id - 1]]
+    else:
+        return []

@@ -27,6 +27,11 @@ const getScoreBadge = (score: number) => {
   return "destructive";
 };
 
+const getTargetType = (shots: { secondary_score: number }[]) => {
+  if (shots.length === 0) return "rifle";
+  return shots[0].secondary_score > 0 ? "pistol" : "rifle";
+};
+
 export default function Dashboard() {
   const [selectedPeriod, setSelectedPeriod] = useState("7days");
   const [recentScores, setRecentScores] = useState<DayStats[]>([]);
@@ -60,9 +65,7 @@ export default function Dashboard() {
     navigate(`/day/${date}`);
   };
 
-  const handleSetClick = (date: string, setId: number) => {
-    navigate(`/set/${date}/${setId}`);
-  };
+
 
   return (
     <div className="flex-1 p-6 space-y-6">
@@ -209,11 +212,7 @@ export default function Dashboard() {
                       {day.list_of_relays.map((relay, idx) => (
                         <div 
                           key={idx}
-                          className="border border-border rounded-md p-3 hover:bg-muted/30 transition-colors"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSetClick(day.day, 1); // Only one relay/set per day for now
-                          }}
+                          className="border border-border rounded-md p-3"
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
@@ -224,7 +223,7 @@ export default function Dashboard() {
                                 variant="secondary"
                                 className="text-xs"
                               >
-                                relay
+                                {getTargetType(relay.list_of_shots)}
                               </Badge>
                             </div>
                             <Badge variant={getScoreBadge(relay.total_score)} className="text-sm font-bold">
