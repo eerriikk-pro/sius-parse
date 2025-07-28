@@ -1,9 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Target, Plus, Eye, Calendar, Clock } from "lucide-react";
+import { ArrowLeft, Target, Plus, Eye, Calendar, Clock, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { InteractiveShotTarget } from "@/components/ui/interactive-shot-target";
 import { fetchShotsByDay, DayStats } from "@/lib/api";
 
 const getScoreColor = (score: number) => {
@@ -12,12 +13,19 @@ const getScoreColor = (score: number) => {
   return "text-destructive";
 };
 
+const getTargetType = (shots: { secondary_score: number }[]) => {
+  if (shots.length === 0) return "rifle";
+  return shots[0].secondary_score > 0 ? "pistol" : "rifle";
+};
+
 export default function DayView() {
   const { date } = useParams();
   const navigate = useNavigate();
   const [dayStats, setDayStats] = useState<DayStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showSighters, setShowSighters] = useState(false);
+  const [sighterZoom, setSighterZoom] = useState(1);
 
   useEffect(() => {
     if (!date) return;
@@ -84,38 +92,95 @@ export default function DayView() {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {dayStats.list_of_relays.map((relay, idx) => (
-              <Card key={idx} className="bg-muted/50">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-xl font-semibold">
-                    <Target className="h-6 w-6" />
-                    Set {idx + 1}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center gap-6 mb-4 text-lg">
-                    <span className="font-semibold">Shots:</span> {relay.total_shots}
-                    <span className="font-semibold">Total Score:</span> {relay.total_score.toFixed(1)}
-                    <span className="font-semibold">Best:</span> {relay.best_score.toFixed(1)}
-                    <span className="font-semibold">Avg:</span> {relay.average_score.toFixed(1)}
-                  </div>
-                  <Button size="lg" className="text-lg px-6 py-2" onClick={() => handleSetClick(idx + 1)}>
-                    View Set
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+            {dayStats.list_of_relays.map((relay, idx) => {
+              const targetType = getTargetType(relay.list_of_shots);
+              return (
+                <Card key={idx} className="bg-muted/50">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <Target className="h-6 w-6" />
+                      Set {idx + 1}
+                      <Badge variant="outline" className="text-xs">
+                        {targetType === "pistol" ? "Pistol" : "Rifle"}
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-6 mb-4 text-lg">
+                      <span className="font-semibold">Shots:</span> {relay.total_shots}
+                      <span className="font-semibold">Total Score:</span> {relay.total_score.toFixed(1)}
+                      <span className="font-semibold">Best:</span> {relay.best_score.toFixed(1)}
+                      <span className="font-semibold">Avg:</span> {relay.average_score.toFixed(1)}
+                    </div>
+                    <Button size="lg" className="text-lg px-6 py-2" onClick={() => handleSetClick(idx + 1)}>
+                      View Set
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
           {dayStats.list_of_sighters.length > 0 && (
             <div className="mt-8">
-              <h4 className="font-bold text-xl mb-3">Sighters</h4>
-              <div className="flex flex-wrap gap-3">
-                {dayStats.list_of_sighters.map((shot, idx) => (
-                  <Badge key={idx} variant="secondary" className="text-lg px-4 py-2">
-                    {shot.primary_score.toFixed(1)}
-                  </Badge>
-                ))}
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-bold text-xl">Sighters</h4>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setShowSighters(!showSighters)}
+                  className="flex items-center gap-2"
+                >
+                  <Eye className="h-4 w-4" />
+                  {showSighters ? "Hide Target" : "Render Target"}
+                </Button>
               </div>
+              {!showSighters && (
+                <div className="flex flex-wrap gap-3">
+                  {dayStats.list_of_sighters.map((shot, idx) => (
+                    <Badge key={idx} variant="secondary" className="text-lg px-4 py-2">
+                      {(() => {
+                        const isPistol = dayStats.list_of_sighters.length > 0 && dayStats.list_of_sighters[0].secondary_score > 0;
+                        if (isPistol) {
+                          return (
+                            <div className="flex flex-col items-center">
+                              <span className="text-xs font-bold">{Math.round(shot.primary_score)}</span>
+                              <span className="text-xs text-muted-foreground">{shot.secondary_score.toFixed(1)}</span>
+                            </div>
+                          );
+                        } else {
+                          return shot.primary_score.toFixed(1);
+                        }
+                      })()}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+              {showSighters && (
+                <div className="relative">
+                  <div className="flex justify-end mb-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowSighters(false)}
+                      className="h-8 w-8 p-0"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="max-w-4xl mx-auto">
+                    <InteractiveShotTarget
+                      shots={dayStats.list_of_sighters}
+                      zoom={sighterZoom}
+                      onZoomChange={setSighterZoom}
+                      showZoomControls={true}
+                      showClearButton={true}
+                      showShotList={true}
+                      title="Sighters"
+                      className="border-2 border-border rounded-lg p-4 bg-muted/10"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </CardContent>
